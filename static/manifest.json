@@ -1,0 +1,15 @@
+{
+  "name": "FibraApp",
+  "short_name": "FibraApp",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a2a6c",
+  "theme_color": "#00bcd4",
+  "icons": [
+    {
+      "src": "/static/icone.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
