@@ -4,8 +4,6 @@ import datetime
 app = Flask(__name__)
 
 def gerar_relatorio_servico(cliente, tipo_servico, dados_servico, data_instalacao):
-    # A data do formulário vem no formato YYYY-MM-DD.
-    # Vamos convertê-la para o formato DD/MM/YYYY.
     data_formatada = ""
     try:
         data_obj = datetime.datetime.strptime(data_instalacao, '%Y-%m-%d').date()
@@ -36,6 +34,10 @@ def gerar_relatorio_servico(cliente, tipo_servico, dados_servico, data_instalaca
         if conector_quantidade and conector_tipo:
             relatorio += f"- {conector_quantidade} {conector_tipo}\n"
 
+        adaptador_quantidade = dados_servico.get('adaptador_quantidade')
+        if adaptador_quantidade:
+            relatorio += f"- {adaptador_quantidade} Acopladores/emendas SC/APC verde\n"
+
         alcas = dados_servico.get('alcas')
         if alcas:
             relatorio += f"- {alcas} alças\n"
@@ -44,6 +46,7 @@ def gerar_relatorio_servico(cliente, tipo_servico, dados_servico, data_instalaca
         pon = dados_servico.get('pon')
         roteador = dados_servico.get('roteador')
         antena = dados_servico.get('antena')
+        smart_pro_tv_box_quantidade = dados_servico.get('smart_pro_tv_box_quantidade')
         outros_equipamentos = dados_servico.get('outros_equipamentos')
 
         if onu:
@@ -54,6 +57,8 @@ def gerar_relatorio_servico(cliente, tipo_servico, dados_servico, data_instalaca
             relatorio += f"\n- Roteador: {roteador}\n"
         if antena:
             relatorio += f"- Antena: {antena}\n"
+        if smart_pro_tv_box_quantidade:
+            relatorio += f"- SMART PRO TV BOX: {smart_pro_tv_box_quantidade}\n"
         if outros_equipamentos:
             relatorio += f"\n- Outros Equipamentos:\n{outros_equipamentos}\n"
 
@@ -87,41 +92,52 @@ def relatorio_app():
             dados_servico['conector_tipo'] = 'conectores verdes'
             dados_servico['cabo_quantidade'] = request.form.get('cabo_quantidade_fibra')
             dados_servico['conector_quantidade'] = request.form.get('conector_quantidade_fibra')
+            dados_servico['adaptador_quantidade'] = request.form.get('adaptador_quantidade_fibra')
             dados_servico['alcas'] = request.form.get('alcas_fibra')
             dados_servico['onu'] = request.form.get('onu')
             dados_servico['pon'] = request.form.get('pon')
+            dados_servico['smart_pro_tv_box_quantidade'] = request.form.get('smart_pro_tv_box')
         
         elif tipo_servico == 'INSTALAÇÃO VIA RÁDIO':
             dados_servico['cabo_tipo'] = 'CABO DE REDE'
             dados_servico['conector_tipo'] = 'conectores RJ-45'
             dados_servico['cabo_quantidade'] = request.form.get('cabo_quantidade_radio')
             dados_servico['conector_quantidade'] = request.form.get('conector_quantidade_radio')
+            dados_servico['adaptador_quantidade'] = request.form.get('adaptador_quantidade_radio')
             dados_servico['roteador'] = request.form.get('roteador')
             dados_servico['antena'] = request.form.get('antena')
             dados_servico['alcas'] = request.form.get('alcas_radio')
-        
+            dados_servico['smart_pro_tv_box_quantidade'] = request.form.get('smart_pro_tv_box')
+
         elif tipo_servico == 'MUDANÇA DE ENDEREÇO':
             dados_servico['cabo_tipo'] = 'DROP'
             dados_servico['conector_tipo'] = 'conectores verdes'
             dados_servico['cabo_quantidade'] = request.form.get('cabo_quantidade_manutencao')
             dados_servico['conector_quantidade'] = request.form.get('conector_quantidade_manutencao')
+            dados_servico['adaptador_quantidade'] = request.form.get('adaptador_quantidade_manutencao')
             dados_servico['alcas'] = request.form.get('alcas_manutencao')
             dados_servico['onu'] = request.form.get('onu_manutencao')
             dados_servico['pon'] = request.form.get('pon_manutencao')
-
-        elif tipo_servico in ['LENTIDÃO', 'SEM INTERNET']:
+            dados_servico['smart_pro_tv_box_quantidade'] = request.form.get('smart_pro_tv_box_manutencao')
+            
+        elif tipo_servico in ['LENTIDÃO', 'SEM INTERNET', 'MANUTENÇÃO']:
             dados_servico['cabo_tipo'] = request.form.get('cabo_tipo')
             dados_servico['conector_tipo'] = request.form.get('conector_tipo')
             dados_servico['cabo_quantidade'] = request.form.get('cabo_quantidade_manutencao')
             dados_servico['conector_quantidade'] = request.form.get('conector_quantidade_manutencao')
+            dados_servico['adaptador_quantidade'] = request.form.get('adaptador_quantidade_manutencao')
             dados_servico['alcas'] = request.form.get('alcas_manutencao')
-
+            dados_servico['onu'] = request.form.get('onu_manutencao')
+            dados_servico['pon'] = request.form.get('pon_manutencao')
+            dados_servico['smart_pro_tv_box_quantidade'] = request.form.get('smart_pro_tv_box_manutencao')
+            
         elif tipo_servico == 'SERVIÇO EM TORRES':
             dados_servico['numero_torre'] = request.form.get('numero_torre')
             dados_servico['cabo_tipo'] = request.form.get('cabo_tipo_torre')
             dados_servico['conector_tipo'] = request.form.get('conector_tipo_torre')
             dados_servico['cabo_quantidade'] = request.form.get('cabo_quantidade_torre')
             dados_servico['conector_quantidade'] = request.form.get('conector_quantidade_torre')
+            dados_servico['adaptador_quantidade'] = request.form.get('adaptador_quantidade_torre')
             dados_servico['alcas'] = request.form.get('alcas_torre')
             dados_servico['outros_equipamentos'] = request.form.get('outros_equipamentos_torre')
 

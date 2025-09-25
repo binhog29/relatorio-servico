@@ -4,10 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Gerador de Relatório de Serviço</title>
-    
     <link rel="manifest" href="/static/manifest.json">
     <link rel="shortcut icon" href="/static/icon_relatorio.png" type="image/x-icon">
-    
     <style>
         /* Estilos CSS (todos os estilos estão aqui, sem dependências externas) */
         :root {
@@ -844,6 +842,7 @@
                     <option value="LENTIDÃO">Lentidão</option>
                     <option value="SEM INTERNET">Sem Internet</option>
                     <option value="TROCA DE EQUIPAMENTO">Troca de Equipamento</option>
+                    <option value="MANUTENÇÃO">Manutenção</option>
                 </select>
             </div>
             <div class="mb-3" id="cliente-div">
@@ -862,6 +861,10 @@
                         <input type="number" class="form-control" id="conector_quantidade_fibra" name="conector_quantidade_fibra">
                     </div>
                     <div class="col-md-6">
+                        <label for="adaptador_quantidade_fibra" class="form-label"><i class="fas fa-link"></i> Acopladores/emendas:</label>
+                        <input type="number" class="form-control" id="adaptador_quantidade_fibra" name="adaptador_quantidade_fibra">
+                    </div>
+                    <div class="col-md-6">
                         <label for="alcas_fibra" class="form-label"><i class="fas fa-grip-lines"></i> Alças:</label>
                         <input type="number" class="form-control" id="alcas_fibra" name="alcas_fibra">
                     </div>
@@ -875,6 +878,10 @@
                     <label for="pon" class="form-label"><i class="fas fa-barcode"></i> PON (Serial):</label>
                     <input type="text" class="form-control" id="pon" name="pon">
                 </div>
+                <div class="mb-3">
+                    <label for="smart_pro_tv_box" class="form-label"><i class="fas fa-tv"></i> SMART PRO TV BOX:</label>
+                    <input type="number" class="form-control" id="smart_pro_tv_box" name="smart_pro_tv_box">
+                </div>
             </div>
             <div id="campos-radio" style="display: none;">
                 <h2 class="mt-4 mb-3 fs-5"><i class="fas fa-tools"></i> Material Utilizado</h2>
@@ -886,6 +893,10 @@
                     <div class="col-md-6">
                         <label for="conector_quantidade_radio" class="form-label"><i class="fas fa-plug"></i> Conectores RJ-45:</label>
                         <input type="number" class="form-control" id="conector_quantidade_radio" name="conector_quantidade_radio">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="adaptador_quantidade_radio" class="form-label"><i class="fas fa-link"></i> Acopladores/emendas:</label>
+                        <input type="number" class="form-control" id="adaptador_quantidade_radio" name="adaptador_quantidade_radio">
                     </div>
                     <div class="col-md-6">
                         <label for="alcas_radio" class="form-label"><i class="fas fa-grip-lines"></i> Alças:</label>
@@ -905,6 +916,10 @@
                         <option value="LHG 24 DBI">LHG 24 DBI</option>
                         <option value="LHG 27 DBI">LHG 27 DBI</option>
                     </select>
+                </div>
+                <div class="mb-3">
+                    <label for="smart_pro_tv_box_radio" class="form-label"><i class="fas fa-tv"></i> SMART PRO TV BOX:</label>
+                    <input type="number" class="form-control" id="smart_pro_tv_box_radio" name="smart_pro_tv_box">
                 </div>
             </div>
             <div id="campos-torres" style="display: none;">
@@ -937,6 +952,10 @@
                             <option value="conectores verdes">CONECTORES VERDES</option>
                             <option value="conectores RJ-45">CONECTORES RJ-45</option>
                         </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="adaptador_quantidade_torre" class="form-label"><i class="fas fa-link"></i> Acopladores/emendas:</label>
+                        <input type="number" class="form-control" id="adaptador_quantidade_torre" name="adaptador_quantidade_torre">
                     </div>
                     <div class="col-md-6">
                         <label for="alcas_torre" class="form-label"><i class="fas fa-grip-lines"></i> Alças:</label>
@@ -976,7 +995,11 @@
                             <option value="conectores RJ-45">CONECTORES RJ-45</option>
                         </select>
                     </div>
-                    <div class="col-md-6" id="alcas-div-manutencao">
+                    <div class="col-md-6">
+                        <label for="adaptador_quantidade_manutencao" class="form-label"><i class="fas fa-link"></i> Acopladores/emendas:</label>
+                        <input type="number" class="form-control" id="adaptador_quantidade_manutencao" name="adaptador_quantidade_manutencao">
+                    </div>
+                    <div class="col-md-6">
                         <label for="alcas_manutencao" class="form-label"><i class="fas fa-grip-lines"></i> Alças:</label>
                         <input type="number" class="form-control" id="alcas_manutencao" name="alcas_manutencao">
                     </div>
@@ -990,6 +1013,10 @@
                     <div class="mb-3">
                         <label for="pon_manutencao" class="form-label"><i class="fas fa-barcode"></i> PON (Serial):</label>
                         <input type="text" class="form-control" id="pon_manutencao" name="pon_manutencao">
+                    </div>
+                    <div class="mb-3">
+                        <label for="smart_pro_tv_box_manutencao" class="form-label"><i class="fas fa-tv"></i> SMART PRO TV BOX:</label>
+                        <input type="number" class="form-control" id="smart_pro_tv_box_manutencao" name="smart_pro_tv_box_manutencao">
                     </div>
                 </div>
             </div>
@@ -1058,12 +1085,12 @@
                 camposTorres.style.display = 'block';
                 document.getElementById('numero_torre').setAttribute('required', 'required');
                 clienteDiv.style.display = 'none';
-            } else if (servico === 'MUDANÇA DE ENDEREÇO' || servico === 'LENTIDÃO' || servico === 'SEM INTERNET') {
+            } else if (servico === 'MUDANÇA DE ENDEREÇO' || servico === 'LENTIDÃO' || servico === 'SEM INTERNET' || servico === 'MANUTENÇÃO') {
                 camposManutencao.style.display = 'block';
                 const equipamentoManutencao = document.getElementById('equipamento-manutencao');
-                equipamentoManutencao.style.display = (servico === 'MUDANÇA DE ENDEREÇO') ? 'block' : 'none';
+                equipamentoManutencao.style.display = (servico === 'MUDANÇA DE ENDEREÇO' || servico === 'MANUTENÇÃO') ? 'block' : 'none';
                 const alcasDivManutencao = document.getElementById('alcas-div-manutencao');
-                alcasDivManutencao.style.display = (servico === 'MUDANÇA DE ENDEREÇO') ? 'block' : 'none';
+                alcasDivManutencao.style.display = 'block';
                 clienteDiv.style.display = 'block';
                 document.getElementById('cliente').setAttribute('required', 'required');
             } else if (servico === 'TROCA DE EQUIPAMENTO') {
