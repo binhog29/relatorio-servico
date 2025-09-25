@@ -4,6 +4,15 @@ import datetime
 app = Flask(__name__)
 
 def gerar_relatorio_servico(cliente, tipo_servico, dados_servico, data_instalacao):
+    # A data do formulário vem no formato YYYY-MM-DD.
+    # Vamos convertê-la para o formato DD/MM/YYYY.
+    data_formatada = ""
+    try:
+        data_obj = datetime.datetime.strptime(data_instalacao, '%Y-%m-%d').date()
+        data_formatada = data_obj.strftime('%d/%m/%Y')
+    except (ValueError, TypeError):
+        data_formatada = "Data Inválida"
+
     relatorio = f"Assunto: {tipo_servico.upper()}\n"
 
     if cliente:
@@ -59,7 +68,7 @@ def gerar_relatorio_servico(cliente, tipo_servico, dados_servico, data_instalaca
     if observacoes:
         relatorio += f"\nOBSERVAÇÕES:\n{observacoes}\n"
 
-    relatorio += f"\nDATA: {data_instalacao}\n"
+    relatorio += f"\nDATA: {data_formatada}\n"
     return relatorio.strip()
 
 @app.route('/', methods=['GET', 'POST'])
