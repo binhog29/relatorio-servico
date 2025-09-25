@@ -3,11 +3,9 @@ import datetime
 
 app = Flask(__name__)
 
-def gerar_relatorio_servico(cliente, tipo_servico, dados_servico):
-    data_hoje = datetime.date.today().strftime('%d/%m/%Y')
+def gerar_relatorio_servico(cliente, tipo_servico, dados_servico, data_instalacao):
     relatorio = f"Assunto: {tipo_servico.upper()}\n"
 
-    # O cliente é opcional para serviço em torres
     if cliente:
         relatorio += f"CLIENTE: {cliente}\n"
 
@@ -16,7 +14,6 @@ def gerar_relatorio_servico(cliente, tipo_servico, dados_servico):
         if numero_torre:
             relatorio += f"TORRE: {numero_torre}\n"
     
-    # Seção de material usado (exceto para Troca de Equipamento)
     if tipo_servico != 'TROCA DE EQUIPAMENTO':
         relatorio += "USADO:\n"
         
@@ -34,7 +31,6 @@ def gerar_relatorio_servico(cliente, tipo_servico, dados_servico):
         if alcas:
             relatorio += f"- {alcas} alças\n"
         
-        # Equipamento
         onu = dados_servico.get('onu')
         pon = dados_servico.get('pon')
         roteador = dados_servico.get('roteador')
@@ -63,7 +59,7 @@ def gerar_relatorio_servico(cliente, tipo_servico, dados_servico):
     if observacoes:
         relatorio += f"\nOBSERVAÇÕES:\n{observacoes}\n"
 
-    relatorio += f"\nDATA: {data_hoje}\n"
+    relatorio += f"\nDATA: {data_instalacao}\n"
     return relatorio.strip()
 
 @app.route('/', methods=['GET', 'POST'])
@@ -72,6 +68,7 @@ def relatorio_app():
     if request.method == 'POST':
         cliente_nome = request.form.get('cliente', '')
         tipo_servico = request.form.get('tipo_servico', '')
+        data_instalacao = request.form.get('data_instalacao')
         
         dados_servico = {}
         dados_servico['observacoes'] = request.form.get('observacoes', '')
@@ -127,7 +124,8 @@ def relatorio_app():
              relatorio_gerado = gerar_relatorio_servico(
                 cliente=cliente_nome,
                 tipo_servico=tipo_servico,
-                dados_servico=dados_servico
+                dados_servico=dados_servico,
+                data_instalacao=data_instalacao
             )
         
     return render_template('relatorio.html', relatorio=relatorio_gerado)

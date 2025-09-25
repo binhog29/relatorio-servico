@@ -334,6 +334,10 @@
                 <label for="observacoes" class="form-label fw-bold"><i class="fas fa-comment-dots"></i> Observações (Opcional):</label>
                 <textarea class="form-control" id="observacoes" name="observacoes" rows="3"></textarea>
             </div>
+            <div class="mb-3">
+                <label for="data_instalacao" class="form-label fw-bold"><i class="fas fa-calendar-alt"></i> Data da Instalação:</label>
+                <input type="date" class="form-control" id="data_instalacao" name="data_instalacao">
+            </div>
             <button type="submit" class="btn btn-primary w-100 mt-3"><i class="fas fa-file-alt"></i> Gerar Relatório</button>
         </form>
         {% if relatorio %}
@@ -385,7 +389,7 @@
                 const equipamentoManutencao = document.getElementById('equipamento-manutencao');
                 equipamentoManutencao.style.display = (servico === 'MUDANÇA DE ENDEREÇO') ? 'block' : 'none';
                 const alcasDivManutencao = document.getElementById('alcas-div-manutencao');
-                alcasDivManutencao.style.display = (servico === 'MUDANÇA DE ENDEREÇo') ? 'block' : 'none';
+                alcasDivManutencao.style.display = (servico === 'MUDANÇA DE ENDEREÇO') ? 'block' : 'none';
                 clienteDiv.style.display = 'block';
                 document.getElementById('cliente').setAttribute('required', 'required');
             } else if (servico === 'TROCA DE EQUIPAMENTO') {
@@ -397,6 +401,11 @@
         });
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('tipo_servico').dispatchEvent(new Event('change'));
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = (today.getMonth() + 1).toString().padStart(2, '0');
+            const day = today.getDate().toString().padStart(2, '0');
+            document.getElementById('data_instalacao').value = `${year}-${month}-${day}`;
         });
         function copiarRelatorio() {
             const relatorioTextarea = document.getElementById('relatorio-texto');
