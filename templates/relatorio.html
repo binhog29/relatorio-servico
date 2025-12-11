@@ -670,6 +670,22 @@
             transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
         }
 
+        .form-control:focus, .form-select:focus {
+            color: var(--bs-body-color);
+            background-color: var(--bs-body-bg);
+            border-color: #86b7fe;
+            outline: 0;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+
+        .form-select {
+            padding-right: 2.5rem;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 16px 12px;
+        }
+
         .button-group {
             display: flex;
             gap: 10px;
@@ -836,6 +852,7 @@
                 <select class="form-select" id="tipo_servico" name="tipo_servico" required>
                     <option value="" selected disabled>Selecione um serviço</option>
                     <option value="INSTALAÇÃO FIBRA ÓPTICA">Instalação Fibra Óptica</option>
+                    <option value="MIGRAÇÃO FIBRA ÓPTICA">Migração Fibra Óptica</option>
                     <option value="INSTALAÇÃO VIA RÁDIO">Instalação Via Rádio</option>
                     <option value="SERVIÇO EM TORRES">Serviço em Torres</option>
                     <option value="MUDANÇA DE ENDEREÇO">Mudança de Endereço</option>
@@ -843,6 +860,7 @@
                     <option value="SEM INTERNET">Sem Internet</option>
                     <option value="TROCA DE EQUIPAMENTO">Troca de Equipamento</option>
                     <option value="MANUTENÇÃO">Manutenção</option>
+                    <option value="RETIRADA DE EQUIPAMENTOS">Retirada de Equipamentos</option>
                 </select>
             </div>
             <div class="mb-3" id="cliente-div">
@@ -926,7 +944,7 @@
                 <h2 class="mt-4 mb-3 fs-5"><i class="fas fa-tools"></i> Serviço em Torres</h2>
                 <div class="mb-3">
                     <label for="numero_torre" class="form-label"><i class="fas fa-map-marker-alt"></i> Número da Torre:</label>
-                    <input type="text" class="form-control" id="numero_torre" name="numero_torre" placeholder="Ex: TORRE 66">
+                    <input type="text" class="form-control" id="numero_torre" name="numero_torre" placeholder="Ex: TORRE 66" required>
                 </div>
                 <div class="row g-3 mb-3">
                     <div class="col-md-6">
@@ -1024,11 +1042,22 @@
                 <h2 class="mt-4 mb-3 fs-5"><i class="fas fa-sync-alt"></i> Troca de Equipamento</h2>
                 <div class="mb-3">
                     <label for="mac_retirado" class="form-label"><i class="fas fa-tag"></i> MAC/Serial do Equipamento Retirado:</label>
-                    <input type="text" class="form-control" id="mac_retirado" name="mac_retirado">
+                    <input type="text" class="form-control" id="mac_retirado" name="mac_retirado" required>
                 </div>
                 <div class="mb-3">
                     <label for="mac_novo" class="form-label"><i class="fas fa-tag"></i> MAC/Serial do Equipamento Novo:</label>
-                    <input type="text" class="form-control" id="mac_novo" name="mac_novo">
+                    <input type="text" class="form-control" id="mac_novo" name="mac_novo" required>
+                </div>
+            </div>
+            <div id="campos-retirada" style="display: none;">
+                <h2 class="mt-4 mb-3 fs-5"><i class="fas fa-box-open"></i> Equipamentos Retirados</h2>
+                <div class="mb-3">
+                    <label for="mac_retirado_retirada" class="form-label"><i class="fas fa-tag"></i> MAC/Serial da ONU/Roteador Retirado:</label>
+                    <input type="text" class="form-control" id="mac_retirado_retirada" name="mac_retirado_retirada" required>
+                </div>
+                <div class="mb-3">
+                    <label for="smart_tv_box_retirada" class="form-label"><i class="fas fa-tv"></i> SMART PRO TV BOX (Serial - Opcional):</label>
+                    <input type="text" class="form-control" id="smart_tv_box_retirada" name="smart_tv_box_retirada">
                 </div>
             </div>
             <div class="mb-3">
@@ -1061,39 +1090,46 @@
             const camposTorres = document.getElementById('campos-torres');
             const camposManutencao = document.getElementById('campos-manutencao');
             const camposTroca = document.getElementById('campos-troca');
+            const camposRetirada = document.getElementById('campos-retirada'); // Novo campo
             const clienteDiv = document.getElementById('cliente-div');
             
+            // Oculta todos os campos primeiro
             camposFibra.style.display = 'none';
             camposRadio.style.display = 'none';
             camposTorres.style.display = 'none';
             camposManutencao.style.display = 'none';
             camposTroca.style.display = 'none';
+            camposRetirada.style.display = 'none'; // Oculta novo campo
 
+            // Remove o atributo required de todos os inputs
             document.querySelectorAll('input, select, textarea').forEach(input => input.removeAttribute('required'));
 
-            if (servico === 'INSTALAÇÃO FIBRA ÓPTICA') {
+            // O campo 'Cliente' é obrigatório por padrão, a menos que seja "Torres"
+            clienteDiv.style.display = 'block';
+            document.getElementById('cliente').setAttribute('required', 'required');
+
+            if (servico === 'INSTALAÇÃO FIBRA ÓPTICA' || servico === 'MIGRAÇÃO FIBRA ÓPTICA') { // Inclui MIGRAÇÃO
                 camposFibra.style.display = 'block';
-                document.getElementById('cliente').setAttribute('required', 'required');
             } else if (servico === 'INSTALAÇÃO VIA RÁDIO') {
                 camposRadio.style.display = 'block';
-                document.getElementById('cliente').setAttribute('required', 'required');
             } else if (servico === 'SERVIÇO EM TORRES') {
                 camposTorres.style.display = 'block';
                 document.getElementById('numero_torre').setAttribute('required', 'required');
-                clienteDiv.style.display = 'none';
+                clienteDiv.style.display = 'none'; // Oculta o campo cliente
             } else if (servico === 'MUDANÇA DE ENDEREÇO' || servico === 'LENTIDÃO' || servico === 'SEM INTERNET' || servico === 'MANUTENÇÃO') {
                 camposManutencao.style.display = 'block';
                 const equipamentoManutencao = document.getElementById('equipamento-manutencao');
+                // Mostra a seção de equipamentos apenas para Mudança e Manutenção
                 equipamentoManutencao.style.display = (servico === 'MUDANÇA DE ENDEREÇO' || servico === 'MANUTENÇÃO') ? 'block' : 'none';
                 const alcasDivManutencao = document.getElementById('alcas-div-manutencao');
                 alcasDivManutencao.style.display = 'block';
-                clienteDiv.style.display = 'block';
-                document.getElementById('cliente').setAttribute('required', 'required');
             } else if (servico === 'TROCA DE EQUIPAMENTO') {
                 camposTroca.style.display = 'block';
-                document.querySelectorAll('#campos-troca input').forEach(input => input.setAttribute('required', 'required'));
-                clienteDiv.style.display = 'block';
-                document.getElementById('cliente').setAttribute('required', 'required');
+                document.getElementById('mac_retirado').setAttribute('required', 'required');
+                document.getElementById('mac_novo').setAttribute('required', 'required');
+            } else if (servico === 'RETIRADA DE EQUIPAMENTOS') { // Novo bloco de lógica
+                camposRetirada.style.display = 'block';
+                document.getElementById('mac_retirado_retirada').setAttribute('required', 'required');
             }
         });
         document.addEventListener('DOMContentLoaded', function() {
@@ -1121,14 +1157,10 @@
             window.open(whatsappUrl, '_blank');
         }
         function limparRelatorio() {
-            const relatorioContainer = document.querySelector('.form-container > hr');
-            const buttonsContainer = document.querySelector('.form-container .button-group');
-            const relatorioText = document.getElementById('relatorio-texto');
-            if (relatorioContainer && buttonsContainer && relatorioText) {
-                relatorioContainer.style.display = 'none';
-                buttonsContainer.style.display = 'none';
-                relatorioText.style.display = 'none';
-            }
+            // Remove a exibição do resultado e esconde a linha horizontal e botões
+            document.querySelectorAll('.form-container > hr, .form-container .button-group, #relatorio-texto').forEach(element => {
+                element.remove();
+            });
         }
     </script>
 </body>
