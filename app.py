@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
-import datetime # NECESSÁRIO para datetime.datetime.strptime
-from datetime import date # NECESSÁRIO para date.today()
+import datetime
+from datetime import date
 
 app = Flask(__name__)
 
@@ -23,6 +23,11 @@ def gerar_relatorio(form):
         relatorio += f"CLIENTE: {cliente}\n"
 
     # ==================================
+    # Variável de Observação Global
+    # ==================================
+    observacoes = form.get('observacoes', '').strip().upper()
+    
+    # ==================================
     # CAMPOS GERAIS PARA INSTALAÇÃO/MIGRAÇÃO FIBRA
     # ==================================
     if tipo_servico in ['INSTALAÇÃO FIBRA ÓPTICA', 'MIGRAÇÃO FIBRA ÓPTICA']:
@@ -43,21 +48,20 @@ def gerar_relatorio(form):
             relatorio += f"- {alcas_fibra} ALÇAS\n"
         
         # Equipamento
-        onu = form.get('onu', '').upper()
+        onu_ont = form.get('onu_ont', '').upper() 
         pon = form.get('pon', '').upper()
         smart_pro_tv_box = form.get('smart_pro_tv_box')
 
         relatorio += "\nEQUIPAMENTO:\n"
-        if onu:
-            relatorio += f"- ONU (MODELO): {onu}\n"
+        if onu_ont:
+            relatorio += f"- ONU/ONT (MODELO): {onu_ont}\n" 
         if pon:
             relatorio += f"- PON (SERIAL): {pon}\n"
         if is_numeric_and_positive(smart_pro_tv_box):
             relatorio += f"- {smart_pro_tv_box} SMART PRO TV BOX\n"
         
-        # Detalhe específico para Migração
-        if tipo_servico == 'MIGRAÇÃO FIBRA ÓPTICA':
-            relatorio += "OBS: Foi realizada a migração de tecnologia para Fibra Óptica.\n"
+        # REMOVIDO: A observação automática para MIGRAÇÃO FIBRA ÓPTICA
+        # Agora, a observação será incluída apenas se o usuário preencher o campo.
 
     # ==================================
     # CAMPOS PARA INSTALAÇÃO VIA RÁDIO
@@ -97,7 +101,7 @@ def gerar_relatorio(form):
     # ==================================
     elif tipo_servico == 'SERVIÇO EM TORRES':
         numero_torre = form.get('numero_torre', '').upper()
-        relatorio = f"SERVIÇO: {tipo_servico}\n" # Reinicia o relatório
+        relatorio = f"SERVIÇO: {tipo_servico}\n" 
         relatorio += f"LOCAL: {numero_torre}\n"
 
         # Material
@@ -145,13 +149,13 @@ def gerar_relatorio(form):
 
         # Equipamento (Só para Mudança e Manutenção)
         if tipo_servico in ['MUDANÇA DE ENDEREÇO', 'MANUTENÇÃO']:
-            onu_manutencao = form.get('onu_manutencao', '').upper()
+            onu_ont_manutencao = form.get('onu_ont_manutencao', '').upper() 
             pon_manutencao = form.get('pon_manutencao', '').upper()
             smart_pro_tv_box_manutencao = form.get('smart_pro_tv_box_manutencao')
 
             relatorio += "\nEQUIPAMENTO:\n"
-            if onu_manutencao:
-                relatorio += f"- ONU (MODELO): {onu_manutencao}\n"
+            if onu_ont_manutencao:
+                relatorio += f"- ONU/ONT (MODELO): {onu_ont_manutencao}\n" 
             if pon_manutencao:
                 relatorio += f"- PON (SERIAL): {pon_manutencao}\n"
             if is_numeric_and_positive(smart_pro_tv_box_manutencao):
@@ -176,15 +180,15 @@ def gerar_relatorio(form):
         smart_tv_box_retirada = form.get('smart_tv_box_retirada', '').upper()
         
         relatorio += "\nEQUIPAMENTOS RETIRADOS:\n"
-        relatorio += f"- ONU/ROTEADOR (MAC/SERIAL): {mac_retirado_retirada}\n"
+        relatorio += f"- ONU/ONT/ROTEADOR (MAC/SERIAL): {mac_retirado_retirada}\n" 
         if smart_tv_box_retirada:
             relatorio += f"- SMART PRO TV BOX (SERIAL): {smart_tv_box_retirada}\n"
 
     # ==================================
     # OBSERVAÇÕES E DATA
     # ==================================
-    observacoes = form.get('observacoes', '').upper()
     
+    # AQUI ESTÁ A CORREÇÃO PRINCIPAL: SÓ INCLUIR SE O CAMPO NÃO ESTIVER VAZIO
     if observacoes:
         relatorio += f"\nOBSERVAÇÕES: {observacoes}\n"
 
@@ -205,15 +209,12 @@ def gerar_relatorio(form):
 def index():
     relatorio = None
     if request.method == 'POST':
-        # Tenta gerar o relatório, e se houver um erro, retorna o erro
         try:
             relatorio = gerar_relatorio(request.form)
         except Exception as e:
-            # Em caso de erro, exibe a mensagem de erro (apenas para debug)
             return f"<h1>Erro Interno (500)</h1><p>Ocorreu um erro no servidor: {e}</p>", 500
 
     return render_template('relatorio.html', relatorio=relatorio)
 
 if __name__ == '__main__':
-    # Garante que o servidor rode em modo debug
     app.run(host='0.0.0.0', port=5000, debug=True)
