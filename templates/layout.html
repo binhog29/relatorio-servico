@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gerador de Relatório de Serviço</title>
+    <link rel="manifest" href="/static/manifest.json">
+    <link rel="shortcut icon" href="/static/icon_relatorio.png" type="image/x-icon">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* BASE CSS RESET E UTILITIES SIMILARES AO BOOTSTRAP */
+        :root {
+            --primary-color: #00bcd4; /* Ciano/Azul claro vibrante */
+            --background-dark: #1a1a1a;
+            --card-dark: #2a2a2a;
+            --text-light: #e0e0e0;
+            --text-muted: #a0a0a0;
+            --success-color: #25d366; /* WhatsApp Green */
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d); /* Gradiente de fundo */
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+            color: var(--text-light);
+        }
+        
+        .form-container {
+            width: 100%;
+            max-width: 650px; 
+            background-color: var(--card-dark);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        h2.fs-5 {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 188, 212, 0.3);
+            padding-bottom: 5px;
+        }
+
+        /* ESTILO PARA CAMPOS E LABELS */
+        label {
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            font-size: 0.9em;
+        }
+        label i {
+            margin-right: 8px;
+            color: var(--primary-color);
+        }
+
+        .input-group, .select-group {
+            margin-bottom: 15px;
+        }
+
+        input[type="text"], input[type="number"], input[type="date"], textarea, select {
+            width: 100%;
+            background-color: var(--background-dark);
+            border: 1px solid #444;
+            color: var(--text-light);
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            font-size: 1em;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(0, 188, 212, 0.25);
+            outline: none;
+        }
+
+        /* LAYOUT DOS CAMPOS EM GRID */
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .row > div {
+            flex-grow: 1;
+            min-width: 48%; 
+        }
+        @media (max-width: 500px) {
+            .row > div {
+                min-width: 100%; 
+            }
+        }
+        
+        /* BOTÕES */
+        button {
+            cursor: pointer;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 15px;
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary-color), #00a8cc);
+            color: var(--card-dark); 
+        }
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .button-group button {
+            flex: 1;
+            margin-top: 0;
+            color: var(--text-light);
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+        }
+        .btn-whatsapp {
+            background-color: #128c7e;
+        }
+        .btn-secondary {
+            background-color: #495057;
+        }
+
+        /* RELATÓRIO GERADO */
+        #relatorio-texto {
+            background-color: var(--background-dark);
+            border: 1px solid var(--primary-color);
+            padding: 20px;
+            border-radius: 10px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'Consolas', monospace;
+            color: #d0d0d0;
+            font-size: 0.95em;
+            margin-top: 20px;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1><i class="fas fa-microchip"></i> Gerador de Relatório de Serviço</h1>
+        
+        {% block content %}{% endblock %}
+        
+    </div>
+    
+    <script>
+        // Funções de interação do relatório
+        function copiarRelatorio() {
+            const relatorioTextarea = document.getElementById('relatorio-texto');
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = relatorioTextarea.innerText.trim();
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+            alert('Relatório copiado para a área de transferência!');
+        }
+        
+        function compartilharWhatsApp() {
+            const relatorioText = document.getElementById('relatorio-texto').innerText;
+            const encodedText = encodeURIComponent(relatorioText);
+            const whatsappUrl = `https://api.whatsapp.com/send?text=${encodedText}`;
+            window.open(whatsappUrl, '_blank');
+        }
+        
+        function limparRelatorio() {
+            const resultado = document.querySelector('.form-container > hr');
+            if (resultado) resultado.remove();
+            const relatorioText = document.getElementById('relatorio-texto');
+            if (relatorioText) relatorioText.remove();
+            const buttonsContainer = document.querySelector('.form-container .button-group');
+            if (buttonsContainer) buttonsContainer.remove();
+        }
+        
+        // Lógica de exibição de campos (Mantida aqui para centralizar o controle de UI)
+        document.getElementById('tipo_servico').addEventListener('change', function() {
+            const servico = this.value;
+            const camposFibra = document.getElementById('campos-fibra');
+            const camposRadio = document.getElementById('campos-radio');
+            const camposTorres = document.getElementById('campos-torres');
+            const camposManutencao = document.getElementById('campos-manutencao');
+            const camposTroca = document.getElementById('campos-troca');
+            const camposRetirada = document.getElementById('campos-retirada');
+            const clienteDiv = document.getElementById('cliente-div');
+            
+            // Oculta todos os blocos de campos
+            camposFibra.style.display = 'none';
+            camposRadio.style.display = 'none';
+            camposTorres.style.display = 'none';
+            camposManutencao.style.display = 'none';
+            camposTroca.style.display = 'none';
+            camposRetirada.style.display = 'none';
+
+            // Remove o atributo required dos campos não essenciais
+            document.querySelectorAll('input, select, textarea').forEach(input => input.removeAttribute('required'));
+
+            // Regra Geral: Cliente é obrigatório
+            clienteDiv.style.display = 'block';
+            document.getElementById('cliente').setAttribute('required', 'required');
+            
+            // LÓGICA DE EXIBIÇÃO DE CAMPOS E OBRIGATORIEDADE ESPECÍFICA
+            if (servico === 'INSTALAÇÃO FIBRA ÓPTICA' || servico === 'MIGRAÇÃO FIBRA ÓPTICA') {
+                camposFibra.style.display = 'block';
+            } else if (servico === 'INSTALAÇÃO VIA RÁDIO') {
+                camposRadio.style.display = 'block';
+            } else if (servico === 'SERVIÇO EM TORRES') {
+                camposTorres.style.display = 'block';
+                document.getElementById('numero_torre').setAttribute('required', 'required');
+                clienteDiv.style.display = 'none'; 
+            } else if (servico === 'MUDANÇA DE ENDEREÇO' || servico === 'LENTIDÃO' || servico === 'SEM INTERNET' || servico === 'MANUTENÇÃO') {
+                camposManutencao.style.display = 'block';
+                const equipamentoManutencao = document.getElementById('equipamento-manutencao');
+                // Mostra a seção de equipamentos apenas para Mudança e Manutenção
+                equipamentoManutencao.style.display = (servico === 'MUDANÇA DE ENDEREÇO' || servico === 'MANUTENÇÃO') ? 'block' : 'none';
+            } else if (servico === 'TROCA DE EQUIPAMENTO') {
+                camposTroca.style.display = 'block';
+                document.getElementById('mac_retirado').setAttribute('required', 'required');
+                document.getElementById('mac_novo').setAttribute('required', 'required');
+            } else if (servico === 'RETIRADA DE EQUIPAMENTOS') {
+                camposRetirada.style.display = 'block';
+                document.getElementById('mac_retirado_retirada').setAttribute('required', 'required');
+            }
+        });
+        
+        // Carrega a data de hoje e dispara a função de mudança ao carregar a página
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('tipo_servico').dispatchEvent(new Event('change'));
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = (today.getMonth() + 1).toString().padStart(2, '0');
+            const day = today.getDate().toString().padStart(2, '0');
+            document.getElementById('data_instalacao').value = `${year}-${month}-${day}`;
+        });
+    </script>
+</body>
+</html>

@@ -1,1167 +1,250 @@
-<!doctype html>
-<html lang="pt-br">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Gerador de Relatório de Serviço</title>
-    <link rel="manifest" href="/static/manifest.json">
-    <link rel="shortcut icon" href="/static/icon_relatorio.png" type="image/x-icon">
-    <style>
-        /* Estilos CSS (todos os estilos estão aqui, sem dependências externas) */
-        :root {
-            --bs-blue: #0d6efd;
-            --bs-indigo: #6610f2;
-            --bs-purple: #6f42c1;
-            --bs-pink: #d63384;
-            --bs-red: #dc3545;
-            --bs-orange: #fd7e14;
-            --bs-yellow: #ffc107;
-            --bs-green: #198754;
-            --bs-teal: #20c997;
-            --bs-cyan: #0dcaf0;
-            --bs-white: #fff;
-            --bs-gray: #6c757d;
-            --bs-gray-dark: #343a40;
-            --bs-gray-100: #f8f9fa;
-            --bs-gray-200: #e9ecef;
-            --bs-gray-300: #dee2e6;
-            --bs-gray-400: #ced4da;
-            --bs-gray-500: #adb5bd;
-            --bs-gray-600: #6c757d;
-            --bs-gray-700: #495057;
-            --bs-gray-800: #343a40;
-            --bs-gray-900: #212529;
-            --bs-primary: #0d6efd;
-            --bs-secondary: #6c757d;
-            --bs-success: #198754;
-            --bs-info: #0dcaf0;
-            --bs-warning: #ffc107;
-            --bs-danger: #dc3545;
-            --bs-light: #f8f9fa;
-            --bs-dark: #212529;
-            --bs-primary-rgb: 13, 110, 253;
-            --bs-secondary-rgb: 108, 117, 125;
-            --bs-success-rgb: 25, 135, 84;
-            --bs-info-rgb: 13, 202, 240;
-            --bs-warning-rgb: 255, 193, 7;
-            --bs-danger-rgb: 220, 53, 69;
-            --bs-light-rgb: 248, 249, 250;
-            --bs-dark-rgb: 33, 37, 41;
-            --bs-primary-text-emphasis: #052c65;
-            --bs-secondary-text-emphasis: #2b2f32;
-            --bs-success-text-emphasis: #0a3622;
-            --bs-info-text-emphasis: #055160;
-            --bs-warning-text-emphasis: #664d03;
-            --bs-danger-text-emphasis: #58151c;
-            --bs-light-text-emphasis: #495057;
-            --bs-dark-text-emphasis: #495057;
-            --bs-primary-bg-subtle: #cfe2ff;
-            --bs-secondary-bg-subtle: #e2e3e5;
-            --bs-success-bg-subtle: #d1e7dd;
-            --bs-info-bg-subtle: #cff4fc;
-            --bs-warning-bg-subtle: #fff3cd;
-            --bs-danger-bg-subtle: #f8d7da;
-            --bs-light-bg-subtle: #fcfcfd;
-            --bs-dark-bg-subtle: #ced4da;
-            --bs-primary-border-subtle: #9ec5fe;
-            --bs-secondary-border-subtle: #c5cbe1;
-            --bs-success-border-subtle: #a3cfbb;
-            --bs-info-border-subtle: #9beaf9;
-            --bs-warning-border-subtle: #ffe69c;
-            --bs-danger-border-subtle: #f1aeb5;
-            --bs-light-border-subtle: #e9ecef;
-            --bs-dark-border-subtle: #adb5bd;
-            --bs-border-width: 1px;
-            --bs-border-style: solid;
-            --bs-border-color: #dee2e6;
-            --bs-border-color-translucent: rgba(0, 0, 0, 0.175);
-            --bs-border-radius: 0.375rem;
-            --bs-border-radius-sm: 0.25rem;
-            --bs-border-radius-lg: 0.5rem;
-            --bs-border-radius-xl: 1rem;
-            --bs-border-radius-xxl: 2rem;
-            --bs-border-radius-2xl: var(--bs-border-radius-xxl);
-            --bs-border-radius-pill: 50rem;
-            --bs-box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-            --bs-box-shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-            --bs-box-shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.175);
-            --bs-box-shadow-inset: inset 0 1px 2px rgba(0, 0, 0, 0.075);
-            --bs-focus-ring-width: 0.25rem;
-            --bs-focus-ring-opacity: 0.25;
-            --bs-focus-ring-color: rgba(13, 110, 253, 0.25);
-            --bs-form-valid-color: #198754;
-            --bs-form-valid-border-color: #198754;
-            --bs-form-invalid-color: #dc3545;
-            --bs-form-invalid-border-color: #dc3545;
-        }
-
-        *, ::after, ::before {
-            box-sizing: border-box;
-        }
-
-        @media (prefers-reduced-motion: no-preference) {
-            :root {
-                scroll-behavior: smooth;
-            }
-        }
-
-        body {
-            margin: 0;
-            font-family: var(--bs-body-font-family);
-            font-size: var(--bs-body-font-size);
-            font-weight: var(--bs-body-font-weight);
-            line-height: var(--bs-body-line-height);
-            color: var(--bs-body-color);
-            text-align: var(--bs-body-text-align);
-            background-color: var(--bs-body-bg);
-            -webkit-text-size-adjust: 100%;
-            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-        }
-
-        hr {
-            margin: 1rem 0;
-            color: inherit;
-            border: 0;
-            border-top: var(--bs-border-width) solid;
-            opacity: 0.25;
-        }
-
-        h1, h2, h3, h4, h5, h6 {
-            margin-top: 0;
-            margin-bottom: 0.5rem;
-            font-family: var(--bs-heading-font-family);
-            font-weight: var(--bs-heading-font-weight);
-            line-height: 1.2;
-            color: var(--bs-heading-color);
-        }
-
-        h1 {
-            font-size: calc(1.375rem + 1.5vw);
-        }
-
-        @media (min-width: 1200px) {
-            h1 {
-                font-size: 2.5rem;
-            }
-        }
-
-        h2 {
-            font-size: calc(1.325rem + 0.9vw);
-        }
-
-        @media (min-width: 1200px) {
-            h2 {
-                font-size: 2rem;
-            }
-        }
-
-        h3 {
-            font-size: calc(1.3rem + 0.6vw);
-        }
-
-        @media (min-width: 1200px) {
-            h3 {
-                font-size: 1.75rem;
-            }
-        }
-
-        h4 {
-            font-size: calc(1.275rem + 0.3vw);
-        }
-
-        @media (min-width: 1200px) {
-            h4 {
-                font-size: 1.5rem;
-            }
-        }
-
-        h5 {
-            font-size: 1.25rem;
-        }
-
-        h6 {
-            font-size: 1rem;
-        }
-
-        p {
-            margin-top: 0;
-            margin-bottom: 1rem;
-        }
-
-        abbr[data-bs-original-title], abbr[title] {
-            text-decoration: underline dotted;
-            cursor: help;
-            text-decoration-skip-ink: none;
-        }
-
-        address {
-            margin-bottom: 1rem;
-            font-style: normal;
-            line-height: inherit;
-        }
-
-        ol, ul {
-            padding-left: 2rem;
-        }
-
-        ol, ul, dl {
-            margin-top: 0;
-            margin-bottom: 1rem;
-        }
-
-        ol ol, ol ul, ul ol, ul ul {
-            margin-bottom: 0;
-        }
-
-        li {
-            list-style: none;
-        }
-
-        blockquote {
-            margin: 0 0 1rem;
-        }
-
-        dfn {
-            font-style: italic;
-        }
-
-        b, strong {
-            font-weight: bolder;
-        }
-
-        small {
-            font-size: 0.875em;
-        }
-
-        mark {
-            padding: 0.1875em;
-            background-color: var(--bs-highlight-bg);
-        }
-
-        sub, sup {
-            position: relative;
-            font-size: 0.75em;
-            line-height: 0;
-            vertical-align: baseline;
-        }
-
-        sub {
-            bottom: -0.25em;
-        }
-
-        sup {
-            top: -0.5em;
-        }
-
-        a {
-            color: var(--bs-link-color);
-            text-decoration: underline;
-        }
-
-        a:hover {
-            color: var(--bs-link-hover-color);
-        }
-
-        a:not([href]):not([class]), a:not([href]):not([class]):hover {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        pre, code, kbd, samp {
-            font-family: var(--bs-font-monospace);
-            font-size: 1em;
-        }
-
-        pre {
-            display: block;
-            margin-top: 0;
-            margin-bottom: 1rem;
-            overflow: auto;
-            font-size: 0.875em;
-        }
-
-        pre code {
-            font-size: inherit;
-            color: inherit;
-        }
-
-        code {
-            font-size: 0.875em;
-            color: var(--bs-code-color);
-            word-wrap: break-word;
-        }
-
-        a>code {
-            color: inherit;
-        }
-
-        kbd {
-            padding: 0.1875rem 0.375rem;
-            font-size: 0.875em;
-            color: var(--bs-body-bg);
-            background-color: var(--bs-body-color);
-            border-radius: 0.25rem;
-        }
-
-        kbd kbd {
-            padding: 0;
-            font-size: 1em;
-        }
-
-        figure {
-            margin: 0 0 1rem;
-        }
-
-        img, svg {
-            vertical-align: middle;
-        }
-
-        table {
-            caption-side: bottom;
-            border-collapse: collapse;
-        }
-
-        caption {
-            padding-top: 0.5rem;
-            padding-bottom: 0.5rem;
-            color: var(--bs-secondary-color);
-            text-align: left;
-        }
-
-        th {
-            text-align: inherit;
-            text-align: -webkit-match-parent;
-        }
-
-        thead, tbody, tfoot, tr, td, th {
-            border-color: inherit;
-            border-style: solid;
-            border-width: 0;
-        }
-
-        label {
-            display: inline-block;
-        }
-
-        button {
-            border-radius: 0;
-        }
-
-        button:focus:not(:focus-visible) {
-            outline: 0;
-        }
-
-        input, button, select, optgroup, textarea {
-            margin: 0;
-            font-family: inherit;
-            font-size: inherit;
-            line-height: inherit;
-        }
-
-        button, select {
-            text-transform: none;
-        }
-
-        [role=button] {
-            cursor: pointer;
-        }
-
-        select {
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-        }
-
-        select.form-select::-moz-focus-inner {
-            padding-top: 0;
-            padding-bottom: 0;
-        }
-
-        [list]::-webkit-calendar-picker-indicator {
-            display: none;
-        }
-
-        [type=button], [type=reset], [type=submit], button {
-            -webkit-appearance: button;
-        }
-
-        [type=button]:not(:disabled), [type=reset]:not(:disabled), [type=submit]:not(:disabled), button:not(:disabled) {
-            cursor: pointer;
-        }
-
-        ::-moz-focus-inner {
-            padding: 0;
-            border-style: none;
-        }
-
-        textarea {
-            resize: vertical;
-        }
-
-        fieldset {
-            min-width: 0;
-            padding: 0;
-            margin: 0;
-            border: 0;
-        }
-
-        legend {
-            float: left;
-            width: 100%;
-            padding: 0;
-            margin-bottom: 0.5rem;
-            font-size: calc(1.275rem + 0.3vw);
-            line-height: inherit;
-            white-space: normal;
-        }
-
-        @media (min-width: 1200px) {
-            legend {
-                font-size: 1.5rem;
-            }
-        }
-
-        legend+* {
-            clear: left;
-        }
-
-        ::-webkit-datetime-edit-day-field, ::-webkit-datetime-edit-month-field, ::-webkit-datetime-edit-year-field {
-            padding: 0;
-        }
-
-        ::-webkit-datetime-edit-text {
-            padding: 0.125em 0.25em;
-        }
-
-        ::-webkit-calendar-picker-indicator {
-            -webkit-appearance: button;
-            appearance: button;
-        }
-
-        ::-webkit-input-placeholder {
-            color: #6c757d;
-            opacity: 1;
-        }
-
-        ::-moz-placeholder {
-            color: #6c757d;
-            opacity: 1;
-        }
-
-        ::placeholder {
-            color: #6c757d;
-            opacity: 1;
-        }
-
-        ::-webkit-file-upload-button {
-            padding: 0.5rem 1rem;
-            margin: 0;
-            font-family: inherit;
-            font-size: inherit;
-            font-weight: inherit;
-            line-height: inherit;
-            color: var(--bs-body-color);
-            background-color: var(--bs-gray-100);
-            border-color: var(--bs-border-color);
-            border-style: solid;
-            border-width: 1px;
-            border-radius: 0.375rem;
-            -webkit-transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-            transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-        }
-
-        :disabled {
-            pointer-events: none;
-            opacity: 0.65;
-        }
-
-        .container, .container-fluid, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {
-            --bs-gutter-x: 1.5rem;
-            --bs-gutter-y: 0;
-            width: 100%;
-            padding-right: calc(var(--bs-gutter-x) * 0.5);
-            padding-left: calc(var(--bs-gutter-x) * 0.5);
-            margin-right: auto;
-            margin-left: auto;
-        }
-
-        @media (min-width: 576px) {
-            .container-sm, .container {
-                max-width: 540px;
-            }
-        }
-
-        @media (min-width: 768px) {
-            .container-md, .container-sm, .container {
-                max-width: 720px;
-            }
-        }
-
-        @media (min-width: 992px) {
-            .container-lg, .container-md, .container-sm, .container {
-                max-width: 960px;
-            }
-        }
-
-        @media (min-width: 1200px) {
-            .container-xl, .container-lg, .container-md, .container-sm, .container {
-                max-width: 1140px;
-            }
-        }
-
-        @media (min-width: 1400px) {
-            .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
-                max-width: 1320px;
-            }
-        }
-
-        .row {
-            --bs-gutter-x: 1.5rem;
-            --bs-gutter-y: 0;
-            display: flex;
-            flex-wrap: wrap;
-            margin-top: calc(var(--bs-gutter-y) * -1);
-            margin-right: calc(var(--bs-gutter-x) * -0.5);
-            margin-left: calc(var(--bs-gutter-x) * -0.5);
-        }
-
-        .row>*, .row>*, .row>*, .row>*, .row>*, .row>* {
-            flex-shrink: 0;
-            width: 100%;
-            max-width: 100%;
-            padding-right: calc(var(--bs-gutter-x) * 0.5);
-            padding-left: calc(var(--bs-gutter-x) * 0.5);
-            margin-top: var(--bs-gutter-y);
-        }
-
-        .g-3, .gx-3 {
-            --bs-gutter-x: 1rem;
-        }
-
-        .g-3, .gy-3 {
-            --bs-gutter-y: 1rem;
-        }
-
-        .col-md-6 {
-            flex: 0 0 auto;
-            width: 50%;
-        }
-
-        .col-md-4 {
-            flex: 0 0 auto;
-            width: 33.33333333%;
-        }
-
-        .mb-3 {
-            margin-bottom: 1rem !important;
-        }
-
-        .mt-3 {
-            margin-top: 1rem !important;
-        }
-
-        .mt-4 {
-            margin-top: 1.5rem !important;
-        }
-
-        .mt-5 {
-            margin-top: 3rem !important;
-        }
-
-        .p-3 {
-            padding: 1rem !important;
-        }
-
-        .p-4 {
-            padding: 1.5rem !important;
-        }
-
-        .text-center {
-            text-align: center !important;
-        }
-
-        .text-end {
-            text-align: right !important;
-        }
-
-        .fw-bold {
-            font-weight: 700 !important;
-        }
-
-        .fs-5 {
-            font-size: 1.25rem !important;
-        }
-
-        .rounded-3 {
-            border-radius: 0.5rem !important;
-        }
-
-        .shadow {
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-        }
-
-        .btn {
-            display: inline-block;
-            font-weight: 400;
-            line-height: 1.5;
-            color: var(--bs-body-color);
-            text-align: center;
-            text-decoration: none;
-            vertical-align: middle;
-            cursor: pointer;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            user-select: none;
-            background-color: transparent;
-            border: var(--bs-border-width) solid transparent;
-            padding: var(--bs-btn-padding-y) var(--bs-btn-padding-x);
-            font-size: var(--bs-btn-font-size);
-            border-radius: var(--bs-btn-border-radius);
-            transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-        }
-
-        .btn-primary {
-            color: var(--bs-btn-color);
-            background-color: var(--bs-btn-bg);
-            border-color: var(--bs-btn-border-color);
-        }
-
-        .btn-success {
-            color: var(--bs-btn-color);
-            background-color: var(--bs-btn-bg);
-            border-color: var(--bs-btn-border-color);
-        }
-
-        .btn-whatsapp {
-            color: var(--bs-btn-color);
-            background-color: var(--bs-btn-bg);
-            border-color: var(--bs-btn-border-color);
-        }
-
-        .btn-secondary {
-            color: var(--bs-btn-color);
-            background-color: var(--bs-btn-bg);
-            border-color: var(--bs-btn-border-color);
-        }
-
-        .w-100 {
-            width: 100% !important;
-        }
-
-        .form-label {
-            margin-bottom: 0.5rem;
-        }
-
-        .form-control, .form-select {
-            display: block;
-            width: 100%;
-            padding: 0.375rem 0.75rem;
-            font-size: 1rem;
-            font-weight: 400;
-            line-height: 1.5;
-            color: var(--bs-body-color);
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            background-color: var(--bs-body-bg);
-            background-clip: padding-box;
-            border: var(--bs-border-width) solid var(--bs-border-color);
-            border-radius: var(--bs-border-radius);
-            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-        }
-
-        .form-control:focus, .form-select:focus {
-            color: var(--bs-body-color);
-            background-color: var(--bs-body-bg);
-            border-color: #86b7fe;
-            outline: 0;
-            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-        }
-
-        .form-select {
-            padding-right: 2.5rem;
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 0.75rem center;
-            background-size: 16px 12px;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
-        .button-group .btn {
-            flex: 1;
-        }
-
-        /* Estilos Personalizados */
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            color: #e0e0e0;
-        }
-        .form-container {
-            max-width: 750px;
-            background-color: rgba(30, 30, 30, 0.95);
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            animation: fadeIn 1s ease-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        h1, h2, h3 {
-            color: #00bcd4;
-            font-weight: 600;
-            margin-bottom: 25px;
-            text-shadow: 0 0 5px rgba(0, 188, 212, 0.5);
-        }
-        label {
-            color: #a0a0a0;
-            font-weight: 400;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-        }
-        label i {
-            margin-right: 8px;
-            color: #00bcd4;
-        }
-        .form-control, .form-select {
-            background-color: #2a2a2a;
-            border: 1px solid #444;
-            color: #e0e0e0;
-            padding: 10px 15px;
-            border-radius: 8px;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-        .form-control:focus, .form-select:focus {
-            border-color: #00bcd4;
-            box-shadow: 0 0 0 0.25rem rgba(0, 188, 212, 0.25);
-            background-color: #3a3a3a;
-            color: #fff;
-        }
-        .form-control::placeholder {
-            color: #e0e0e0;
-            opacity: 0.6;
-        }
-        .form-select option {
-            background-color: #2a2a2a;
-            color: #e0e0e0;
-        }
-        .btn-primary {
-            background: linear-gradient(45deg, #00bcd4, #00a8cc);
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-        }
-        .btn-primary:hover {
-            background: linear-gradient(45deg, #00a8cc, #0093b4);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 188, 212, 0.4);
-        }
-        .btn-success {
-            background: linear-gradient(45deg, #28a745, #218838);
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-        }
-        .btn-success:hover {
-            background: linear-gradient(45deg, #218838, #1e7e34);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
-        }
-        .btn-whatsapp {
-            background: linear-gradient(45deg, #25d366, #128c7e);
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-        }
-        .btn-whatsapp:hover {
-            background: linear-gradient(45deg, #128c7e, #25d366);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
-        }
-        .btn-secondary {
-            background: linear-gradient(45deg, #6c757d, #5a6268);
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-        }
-        .btn-secondary:hover {
-            background: linear-gradient(45deg, #5a6268, #495057);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
-        }
-        hr {
-            border-top: 1px solid #444;
-            margin-top: 40px;
-            margin-bottom: 30px;
-        }
-        #relatorio-texto {
-            background-color: #1a1a1a;
-            border: 1px solid #00bcd4;
-            padding: 20px;
-            border-radius: 10px;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            font-family: 'Consolas', 'Monaco', monospace;
-            color: #d0d0d0;
-            font-size: 0.95em;
-        }
-        .button-group {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
-        .button-group .btn {
-            flex: 1;
-        }
-    </style>
-</head>
-<body>
-    <div class="container form-container">
-        <h1 class="text-center mb-4"><i class="fas fa-microchip"></i> Gerador de Relatório de Serviço</h1>
-        <form action="/" method="post">
-            <div class="mb-3">
-                <label for="tipo_servico" class="form-label fw-bold"><i class="fas fa-cogs"></i> Tipo de Serviço:</label>
-                <select class="form-select" id="tipo_servico" name="tipo_servico" required>
-                    <option value="" selected disabled>Selecione um serviço</option>
-                    <option value="INSTALAÇÃO FIBRA ÓPTICA">Instalação Fibra Óptica</option>
-                    <option value="MIGRAÇÃO FIBRA ÓPTICA">Migração Fibra Óptica</option>
-                    <option value="INSTALAÇÃO VIA RÁDIO">Instalação Via Rádio</option>
-                    <option value="SERVIÇO EM TORRES">Serviço em Torres</option>
-                    <option value="MUDANÇA DE ENDEREÇO">Mudança de Endereço</option>
-                    <option value="LENTIDÃO">Lentidão</option>
-                    <option value="SEM INTERNET">Sem Internet</option>
-                    <option value="TROCA DE EQUIPAMENTO">Troca de Equipamento</option>
-                    <option value="MANUTENÇÃO">Manutenção</option>
-                    <option value="RETIRADA DE EQUIPAMENTOS">Retirada de Equipamentos</option>
+{% extends "layout.html" %}
+
+{% block content %}
+    <form action="/" method="post">
+        <div class="select-group">
+            <label for="tipo_servico"><i class="fas fa-cogs"></i> Tipo de Serviço:</label>
+            <select id="tipo_servico" name="tipo_servico" required>
+                <option value="" selected disabled>Selecione um serviço</option>
+                <option value="INSTALAÇÃO FIBRA ÓPTICA">Instalação Fibra Óptica</option>
+                <option value="MIGRAÇÃO FIBRA ÓPTICA">Migração Fibra Óptica</option>
+                <option value="INSTALAÇÃO VIA RÁDIO">Instalação Via Rádio</option>
+                <option value="SERVIÇO EM TORRES">Serviço em Torres</option>
+                <option value="MUDANÇA DE ENDEREÇO">Mudança de Endereço</option>
+                <option value="LENTIDÃO">Lentidão</option>
+                <option value="SEM INTERNET">Sem Internet</option>
+                <option value="TROCA DE EQUIPAMENTO">Troca de Equipamento</option>
+                <option value="MANUTENÇÃO">Manutenção</option>
+                <option value="RETIRADA DE EQUIPAMENTOS">Retirada de Equipamentos</option>
+            </select>
+        </div>
+        
+        <div class="input-group" id="cliente-div">
+            <label for="cliente"><i class="fas fa-user"></i> Cliente:</label>
+            <input type="text" id="cliente" name="cliente" required>
+        </div>
+        
+        <div id="campos-fibra" style="display: none;">
+            <h2 class="fs-5"><i class="fas fa-tools"></i> Material Utilizado</h2>
+            <div class="row">
+                <div>
+                    <label for="cabo_quantidade_fibra"><i class="fas fa-ruler-horizontal"></i> Metros de DROP:</label>
+                    <input type="number" id="cabo_quantidade_fibra" name="cabo_quantidade_fibra">
+                </div>
+                <div>
+                    <label for="conector_quantidade_fibra"><i class="fas fa-plug"></i> Conectores verdes:</label>
+                    <input type="number" id="conector_quantidade_fibra" name="conector_quantidade_fibra">
+                </div>
+                <div>
+                    <label for="adaptador_quantidade_fibra"><i class="fas fa-link"></i> Acopladores/emendas:</label>
+                    <input type="number" id="adaptador_quantidade_fibra" name="adaptador_quantidade_fibra">
+                </div>
+                <div>
+                    <label for="alcas_fibra"><i class="fas fa-grip-lines"></i> Alças:</label>
+                    <input type="number" id="alcas_fibra" name="alcas_fibra">
+                </div>
+            </div>
+            <h2 class="fs-5"><i class="fas fa-ethernet"></i> Equipamento</h2>
+            <div class="input-group">
+                <label for="onu_ont"><i class="fas fa-wifi"></i> ONU/ONT (Modelo):</label>
+                <input type="text" id="onu_ont" name="onu_ont">
+            </div>
+            <div class="input-group">
+                <label for="pon"><i class="fas fa-barcode"></i> PON (Serial):</label>
+                <input type="text" id="pon" name="pon">
+            </div>
+            <div class="input-group">
+                <label for="smart_pro_tv_box"><i class="fas fa-tv"></i> SMART PRO TV BOX:</label>
+                <input type="number" id="smart_pro_tv_box" name="smart_pro_tv_box">
+            </div>
+        </div>
+        
+        <div id="campos-radio" style="display: none;">
+            <h2 class="fs-5"><i class="fas fa-tools"></i> Material Utilizado</h2>
+            <div class="row">
+                <div>
+                    <label for="cabo_quantidade_radio"><i class="fas fa-ruler-horizontal"></i> Metros de CABO DE REDE:</label>
+                    <input type="number" id="cabo_quantidade_radio" name="cabo_quantidade_radio">
+                </div>
+                <div>
+                    <label for="conector_quantidade_radio"><i class="fas fa-plug"></i> Conectores RJ-45:</label>
+                    <input type="number" id="conector_quantidade_radio" name="conector_quantidade_radio">
+                </div>
+                <div>
+                    <label for="adaptador_quantidade_radio"><i class="fas fa-link"></i> Acopladores/emendas:</label>
+                    <input type="number" id="adaptador_quantidade_radio" name="adaptador_quantidade_radio">
+                </div>
+                <div>
+                    <label for="alcas_radio"><i class="fas fa-grip-lines"></i> Alças:</label>
+                    <input type="number" id="alcas_radio" name="alcas_radio">
+                </div>
+            </div>
+            <h2 class="fs-5"><i class="fas fa-broadcast-tower"></i> Equipamento</h2>
+            <div class="input-group">
+                <label for="roteador"><i class="fas fa-router"></i> Roteador:</label>
+                <input type="text" id="roteador" name="roteador">
+            </div>
+            <div class="select-group">
+                <label for="antena"><i class="fas fa-satellite-dish"></i> Antena:</label>
+                <select id="antena" name="antena">
+                    <option value="">Selecione a Antena</option>
+                    <option value="LITEBEAM M5">LITEBEAM M5</option>
+                    <option value="LHG 24 DBI">LHG 24 DBI</option>
+                    <option value="LHG 27 DBI">LHG 27 DBI</option>
                 </select>
             </div>
-            <div class="mb-3" id="cliente-div">
-                <label for="cliente" class="form-label fw-bold"><i class="fas fa-user"></i> Cliente:</label>
-                <input type="text" class="form-control" id="cliente" name="cliente" required>
+            <div class="input-group">
+                <label for="smart_pro_tv_box_radio"><i class="fas fa-tv"></i> SMART PRO TV BOX:</label>
+                <input type="number" id="smart_pro_tv_box_radio" name="smart_pro_tv_box">
             </div>
-            <div id="campos-fibra" style="display: none;">
-                <h2 class="mt-4 mb-3 fs-5"><i class="fas fa-tools"></i> Material Utilizado</h2>
-                <div class="row g-3 mb-3">
-                    <div class="col-md-6">
-                        <label for="cabo_quantidade_fibra" class="form-label"><i class="fas fa-ruler-horizontal"></i> Metros de DROP:</label>
-                        <input type="number" class="form-control" id="cabo_quantidade_fibra" name="cabo_quantidade_fibra">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="conector_quantidade_fibra" class="form-label"><i class="fas fa-plug"></i> Conectores verdes:</label>
-                        <input type="number" class="form-control" id="conector_quantidade_fibra" name="conector_quantidade_fibra">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="adaptador_quantidade_fibra" class="form-label"><i class="fas fa-link"></i> Acopladores/emendas:</label>
-                        <input type="number" class="form-control" id="adaptador_quantidade_fibra" name="adaptador_quantidade_fibra">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="alcas_fibra" class="form-label"><i class="fas fa-grip-lines"></i> Alças:</label>
-                        <input type="number" class="form-control" id="alcas_fibra" name="alcas_fibra">
-                    </div>
-                </div>
-                <h2 class="mt-4 mb-3 fs-5"><i class="fas fa-ethernet"></i> Equipamento</h2>
-                <div class="mb-3">
-                    <label for="onu" class="form-label"><i class="fas fa-wifi"></i> ONU (Modelo):</label>
-                    <input type="text" class="form-control" id="onu" name="onu">
-                </div>
-                <div class="mb-3">
-                    <label for="pon" class="form-label"><i class="fas fa-barcode"></i> PON (Serial):</label>
-                    <input type="text" class="form-control" id="pon" name="pon">
-                </div>
-                <div class="mb-3">
-                    <label for="smart_pro_tv_box" class="form-label"><i class="fas fa-tv"></i> SMART PRO TV BOX:</label>
-                    <input type="number" class="form-control" id="smart_pro_tv_box" name="smart_pro_tv_box">
-                </div>
+        </div>
+        
+        <div id="campos-torres" style="display: none;">
+            <h2 class="fs-5"><i class="fas fa-tools"></i> Serviço em Torres</h2>
+            <div class="input-group">
+                <label for="numero_torre"><i class="fas fa-map-marker-alt"></i> Número da Torre:</label>
+                <input type="text" class="form-control" id="numero_torre" name="numero_torre" placeholder="Ex: TORRE 66" required>
             </div>
-            <div id="campos-radio" style="display: none;">
-                <h2 class="mt-4 mb-3 fs-5"><i class="fas fa-tools"></i> Material Utilizado</h2>
-                <div class="row g-3 mb-3">
-                    <div class="col-md-6">
-                        <label for="cabo_quantidade_radio" class="form-label"><i class="fas fa-ruler-horizontal"></i> Metros de CABO DE REDE:</label>
-                        <input type="number" class="form-control" id="cabo_quantidade_radio" name="cabo_quantidade_radio">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="conector_quantidade_radio" class="form-label"><i class="fas fa-plug"></i> Conectores RJ-45:</label>
-                        <input type="number" class="form-control" id="conector_quantidade_radio" name="conector_quantidade_radio">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="adaptador_quantidade_radio" class="form-label"><i class="fas fa-link"></i> Acopladores/emendas:</label>
-                        <input type="number" class="form-control" id="adaptador_quantidade_radio" name="adaptador_quantidade_radio">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="alcas_radio" class="form-label"><i class="fas fa-grip-lines"></i> Alças:</label>
-                        <input type="number" class="form-control" id="alcas_radio" name="alcas_radio">
-                    </div>
+            <div class="row">
+                <div>
+                    <label for="cabo_quantidade_torre"><i class="fas fa-ruler-horizontal"></i> Metros de cabo:</label>
+                    <input type="number" id="cabo_quantidade_torre" name="cabo_quantidade_torre">
                 </div>
-                <h2 class="mt-4 mb-3 fs-5"><i class="fas fa-broadcast-tower"></i> Equipamento</h2>
-                <div class="mb-3">
-                    <label for="roteador" class="form-label"><i class="fas fa-router"></i> Roteador:</label>
-                    <input type="text" class="form-control" id="roteador" name="roteador">
-                </div>
-                <div class="mb-3">
-                    <label for="antena" class="form-label"><i class="fas fa-satellite-dish"></i> Antena:</label>
-                    <select class="form-select" id="antena" name="antena">
-                        <option value="">Selecione a Antena</option>
-                        <option value="LITEBEAM M5">LITEBEAM M5</option>
-                        <option value="LHG 24 DBI">LHG 24 DBI</option>
-                        <option value="LHG 27 DBI">LHG 27 DBI</option>
+                <div>
+                    <label for="cabo_tipo_torre"><i class="fas fa-stream"></i> Tipo de Cabo:</label>
+                    <select id="cabo_tipo_torre" name="cabo_tipo_torre">
+                        <option value="">Nenhum</option>
+                        <option value="DROP">DROP</option>
+                        <option value="CABO DE REDE">CABO DE REDE</option>
                     </select>
                 </div>
-                <div class="mb-3">
-                    <label for="smart_pro_tv_box_radio" class="form-label"><i class="fas fa-tv"></i> SMART PRO TV BOX:</label>
-                    <input type="number" class="form-control" id="smart_pro_tv_box_radio" name="smart_pro_tv_box">
+                <div>
+                    <label for="conector_quantidade_torre"><i class="fas fa-plug"></i> Conectores:</label>
+                    <input type="number" id="conector_quantidade_torre" name="conector_quantidade_torre">
+                </div>
+                <div>
+                    <label for="conector_tipo_torre"><i class="fas fa-link"></i> Tipo de Conector:</label>
+                    <select id="conector_tipo_torre" name="conector_tipo_torre">
+                        <option value="">Nenhum</option>
+                        <option value="conectores verdes">CONECTORES VERDES</option>
+                        <option value="conectores RJ-45">CONECTORES RJ-45</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="adaptador_quantidade_torre"><i class="fas fa-link"></i> Acopladores/emendas:</label>
+                    <input type="number" id="adaptador_quantidade_torre" name="adaptador_quantidade_torre">
+                </div>
+                <div>
+                    <label for="alcas_torre"><i class="fas fa-grip-lines"></i> Alças:</label>
+                    <input type="number" id="alcas_torre" name="alcas_torre">
                 </div>
             </div>
-            <div id="campos-torres" style="display: none;">
-                <h2 class="mt-4 mb-3 fs-5"><i class="fas fa-tools"></i> Serviço em Torres</h2>
-                <div class="mb-3">
-                    <label for="numero_torre" class="form-label"><i class="fas fa-map-marker-alt"></i> Número da Torre:</label>
-                    <input type="text" class="form-control" id="numero_torre" name="numero_torre" placeholder="Ex: TORRE 66" required>
+            <h2 class="fs-5"><i class="fas fa-wrench"></i> Outros Equipamentos</h2>
+            <div class="input-group">
+                <label for="outros_equipamentos_torre"><i class="fas fa-tools"></i> Detalhe os equipamentos:</label>
+                <textarea id="outros_equipamentos_torre" name="outros_equipamentos_torre" rows="3"></textarea>
+            </div>
+        </div>
+        
+        <div id="campos-manutencao" style="display: none;">
+            <h2 class="fs-5"><i class="fas fa-wrench"></i> Material e Equipamento</h2>
+            <div class="row">
+                <div>
+                    <label for="cabo_quantidade_manutencao"><i class="fas fa-ruler-horizontal"></i> Metros de cabo:</label>
+                    <input type="number" id="cabo_quantidade_manutencao" name="cabo_quantidade_manutencao">
                 </div>
-                <div class="row g-3 mb-3">
-                    <div class="col-md-6">
-                        <label for="cabo_quantidade_torre" class="form-label"><i class="fas fa-ruler-horizontal"></i> Metros de cabo:</label>
-                        <input type="number" class="form-control" id="cabo_quantidade_torre" name="cabo_quantidade_torre">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="cabo_tipo_torre" class="form-label"><i class="fas fa-stream"></i> Tipo de Cabo:</label>
-                        <select class="form-select" id="cabo_tipo_torre" name="cabo_tipo_torre">
-                            <option value="">Nenhum</option>
-                            <option value="DROP">DROP</option>
-                            <option value="CABO DE REDE">CABO DE REDE</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="conector_quantidade_torre" class="form-label"><i class="fas fa-plug"></i> Conectores:</label>
-                        <input type="number" class="form-control" id="conector_quantidade_torre" name="conector_quantidade_torre">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="conector_tipo_torre" class="form-label"><i class="fas fa-link"></i> Tipo de Conector:</label>
-                        <select class="form-select" id="conector_tipo_torre" name="conector_tipo_torre">
-                            <option value="">Nenhum</option>
-                            <option value="conectores verdes">CONECTORES VERDES</option>
-                            <option value="conectores RJ-45">CONECTORES RJ-45</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="adaptador_quantidade_torre" class="form-label"><i class="fas fa-link"></i> Acopladores/emendas:</label>
-                        <input type="number" class="form-control" id="adaptador_quantidade_torre" name="adaptador_quantidade_torre">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="alcas_torre" class="form-label"><i class="fas fa-grip-lines"></i> Alças:</label>
-                        <input type="number" class="form-control" id="alcas_torre" name="alcas_torre">
-                    </div>
+                <div>
+                    <label for="cabo_tipo"><i class="fas fa-stream"></i> Tipo de Cabo:</label>
+                    <select id="cabo_tipo" name="cabo_tipo">
+                        <option value="">Nenhum</option>
+                        <option value="DROP">DROP</option>
+                        <option value="CABO DE REDE">CABO DE REDE</option>
+                    </select>
                 </div>
-                <h2 class="mt-4 mb-3 fs-5"><i class="fas fa-wrench"></i> Outros Equipamentos</h2>
-                <div class="mb-3">
-                    <label for="outros_equipamentos_torre" class="form-label"><i class="fas fa-tools"></i> Detalhe os equipamentos:</label>
-                    <textarea class="form-control" id="outros_equipamentos_torre" name="outros_equipamentos_torre" rows="3"></textarea>
+                <div>
+                    <label for="conector_quantidade_manutencao"><i class="fas fa-plug"></i> Conectores:</label>
+                    <input type="number" id="conector_quantidade_manutencao" name="conector_quantidade_manutencao">
+                </div>
+                <div>
+                    <label for="conector_tipo"><i class="fas fa-link"></i> Tipo de Conector:</label>
+                    <select id="conector_tipo" name="conector_tipo">
+                        <option value="">Nenhum</option>
+                        <option value="conectores verdes">CONECTORES VERDES</option>
+                        <option value="conectores RJ-45">CONECTORES RJ-45</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="adaptador_quantidade_manutencao"><i class="fas fa-link"></i> Acopladores/emendas:</label>
+                    <input type="number" id="adaptador_quantidade_manutencao" name="adaptador_quantidade_manutencao">
+                </div>
+                <div id="alcas-div-manutencao">
+                    <label for="alcas_manutencao"><i class="fas fa-grip-lines"></i> Alças:</label>
+                    <input type="number" id="alcas_manutencao" name="alcas_manutencao">
                 </div>
             </div>
-            <div id="campos-manutencao" style="display: none;">
-                <h2 class="mt-4 mb-3 fs-5"><i class="fas fa-wrench"></i> Material e Equipamento</h2>
-                <div class="row g-3 mb-3">
-                    <div class="col-md-6">
-                        <label for="cabo_quantidade_manutencao" class="form-label"><i class="fas fa-ruler-horizontal"></i> Metros de cabo:</label>
-                        <input type="number" class="form-control" id="cabo_quantidade_manutencao" name="cabo_quantidade_manutencao">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="cabo_tipo" class="form-label"><i class="fas fa-stream"></i> Tipo de Cabo:</label>
-                        <select class="form-select" id="cabo_tipo" name="cabo_tipo">
-                            <option value="">Nenhum</option>
-                            <option value="DROP">DROP</option>
-                            <option value="CABO DE REDE">CABO DE REDE</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="conector_quantidade_manutencao" class="form-label"><i class="fas fa-plug"></i> Conectores:</label>
-                        <input type="number" class="form-control" id="conector_quantidade_manutencao" name="conector_quantidade_manutencao">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="conector_tipo" class="form-label"><i class="fas fa-link"></i> Tipo de Conector:</label>
-                        <select class="form-select" id="conector_tipo" name="conector_tipo">
-                            <option value="">Nenhum</option>
-                            <option value="conectores verdes">CONECTORES VERDES</option>
-                            <option value="conectores RJ-45">CONECTORES RJ-45</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="adaptador_quantidade_manutencao" class="form-label"><i class="fas fa-link"></i> Acopladores/emendas:</label>
-                        <input type="number" class="form-control" id="adaptador_quantidade_manutencao" name="adaptador_quantidade_manutencao">
-                    </div>
-                    <div class="col-md-6" id="alcas-div-manutencao">
-                        <label for="alcas_manutencao" class="form-label"><i class="fas fa-grip-lines"></i> Alças:</label>
-                        <input type="number" class="form-control" id="alcas_manutencao" name="alcas_manutencao">
-                    </div>
+            <div id="equipamento-manutencao" style="display: none;">
+                <h2 class="fs-5"><i class="fas fa-ethernet"></i> Equipamento</h2>
+                <div class="input-group">
+                    <label for="onu_ont_manutencao"><i class="fas fa-wifi"></i> ONU/ONT (Modelo):</label>
+                    <input type="text" id="onu_ont_manutencao" name="onu_ont_manutencao">
                 </div>
-                <div id="equipamento-manutencao" style="display: none;">
-                    <h2 class="mt-4 mb-3 fs-5"><i class="fas fa-ethernet"></i> Equipamento</h2>
-                    <div class="mb-3">
-                        <label for="onu_manutencao" class="form-label"><i class="fas fa-wifi"></i> ONU (Modelo):</label>
-                        <input type="text" class="form-control" id="onu_manutencao" name="onu_manutencao">
-                    </div>
-                    <div class="mb-3">
-                        <label for="pon_manutencao" class="form-label"><i class="fas fa-barcode"></i> PON (Serial):</label>
-                        <input type="text" class="form-control" id="pon_manutencao" name="pon_manutencao">
-                    </div>
-                    <div class="mb-3">
-                        <label for="smart_pro_tv_box_manutencao" class="form-label"><i class="fas fa-tv"></i> SMART PRO TV BOX:</label>
-                        <input type="number" class="form-control" id="smart_pro_tv_box_manutencao" name="smart_pro_tv_box_manutencao">
-                    </div>
+                <div class="input-group">
+                    <label for="pon_manutencao"><i class="fas fa-barcode"></i> PON (Serial):</label>
+                    <input type="text" id="pon_manutencao" name="pon_manutencao">
+                </div>
+                <div class="input-group">
+                    <label for="smart_pro_tv_box_manutencao"><i class="fas fa-tv"></i> SMART PRO TV BOX:</label>
+                    <input type="number" id="smart_pro_tv_box_manutencao" name="smart_pro_tv_box_manutencao">
                 </div>
             </div>
-            <div id="campos-troca" style="display: none;">
-                <h2 class="mt-4 mb-3 fs-5"><i class="fas fa-sync-alt"></i> Troca de Equipamento</h2>
-                <div class="mb-3">
-                    <label for="mac_retirado" class="form-label"><i class="fas fa-tag"></i> MAC/Serial do Equipamento Retirado:</label>
-                    <input type="text" class="form-control" id="mac_retirado" name="mac_retirado" required>
-                </div>
-                <div class="mb-3">
-                    <label for="mac_novo" class="form-label"><i class="fas fa-tag"></i> MAC/Serial do Equipamento Novo:</label>
-                    <input type="text" class="form-control" id="mac_novo" name="mac_novo" required>
-                </div>
+        </div>
+        
+        <div id="campos-troca" style="display: none;">
+            <h2 class="fs-5"><i class="fas fa-sync-alt"></i> Troca de Equipamento</h2>
+            <div class="input-group">
+                <label for="mac_retirado"><i class="fas fa-tag"></i> MAC/Serial do Equipamento Retirado:</label>
+                <input type="text" id="mac_retirado" name="mac_retirado" required>
             </div>
-            <div id="campos-retirada" style="display: none;">
-                <h2 class="mt-4 mb-3 fs-5"><i class="fas fa-box-open"></i> Equipamentos Retirados</h2>
-                <div class="mb-3">
-                    <label for="mac_retirado_retirada" class="form-label"><i class="fas fa-tag"></i> MAC/Serial da ONU/Roteador Retirado:</label>
-                    <input type="text" class="form-control" id="mac_retirado_retirada" name="mac_retirado_retirada" required>
-                </div>
-                <div class="mb-3">
-                    <label for="smart_tv_box_retirada" class="form-label"><i class="fas fa-tv"></i> SMART PRO TV BOX (Serial - Opcional):</label>
-                    <input type="text" class="form-control" id="smart_tv_box_retirada" name="smart_tv_box_retirada">
-                </div>
+            <div class="input-group">
+                <label for="mac_novo"><i class="fas fa-tag"></i> MAC/Serial do Equipamento Novo:</label>
+                <input type="text" id="mac_novo" name="mac_novo" required>
             </div>
-            <div class="mb-3">
-                <label for="observacoes" class="form-label fw-bold"><i class="fas fa-comment-dots"></i> Observações (Opcional):</label>
-                <textarea class="form-control" id="observacoes" name="observacoes" rows="3"></textarea>
+        </div>
+        
+        <div id="campos-retirada" style="display: none;">
+            <h2 class="fs-5"><i class="fas fa-box-open"></i> Equipamentos Retirados</h2>
+            <div class="input-group">
+                <label for="mac_retirado_retirada"><i class="fas fa-tag"></i> MAC/Serial da ONU/ONT/Roteador Retirado:</label>
+                <input type="text" id="mac_retirado_retirada" name="mac_retirado_retirada" required>
             </div>
-            <div class="mb-3">
-                <label for="data_instalacao" class="form-label fw-bold"><i class="fas fa-calendar-alt"></i> Data:</label>
-                <input type="date" class="form-control" id="data_instalacao" name="data_instalacao">
+            <div class="input-group">
+                <label for="smart_tv_box_retirada"><i class="fas fa-tv"></i> SMART PRO TV BOX (Serial - Opcional):</label>
+                <input type="text" id="smart_tv_box_retirada" name="smart_tv_box_retirada">
             </div>
-            <button type="submit" class="btn btn-primary w-100 mt-3"><i class="fas fa-file-alt"></i> Gerar Relatório</button>
-        </form>
-        {% if relatorio %}
-            <hr class="mt-5">
-            <h3 class="fs-5"><i class="fas fa-clipboard-list"></i> Relatório Gerado:</h3>
-            <pre class="p-3" id="relatorio-texto">{{ relatorio }}</pre>
-            <div class="button-group mt-3">
-                <button class="btn btn-success" onclick="copiarRelatorio()"><i class="fas fa-copy"></i> Copiar</button>
-                <button class="btn btn-whatsapp" onclick="compartilharWhatsApp()"><i class="fab fa-whatsapp"></i> WhatsApp</button>
-                <button class="btn btn-secondary" onclick="limparRelatorio()"><i class="fas fa-times"></i> Limpar</button>
-            </div>
-        {% endif %}
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.getElementById('tipo_servico').addEventListener('change', function() {
-            const servico = this.value;
-            const camposFibra = document.getElementById('campos-fibra');
-            const camposRadio = document.getElementById('campos-radio');
-            const camposTorres = document.getElementById('campos-torres');
-            const camposManutencao = document.getElementById('campos-manutencao');
-            const camposTroca = document.getElementById('campos-troca');
-            const camposRetirada = document.getElementById('campos-retirada'); // Novo campo
-            const clienteDiv = document.getElementById('cliente-div');
-            
-            // Oculta todos os campos primeiro
-            camposFibra.style.display = 'none';
-            camposRadio.style.display = 'none';
-            camposTorres.style.display = 'none';
-            camposManutencao.style.display = 'none';
-            camposTroca.style.display = 'none';
-            camposRetirada.style.display = 'none'; // Oculta novo campo
+        </div>
+        
+        <div class="input-group">
+            <label for="observacoes"><i class="fas fa-comment-dots"></i> Observações (Opcional - Preencher se necessário):</label>
+            <textarea id="observacoes" name="observacoes" rows="3"></textarea>
+        </div>
+        
+        <div class="input-group">
+            <label for="data_instalacao"><i class="fas fa-calendar-alt"></i> Data:</label>
+            <input type="date" id="data_instalacao" name="data_instalacao">
+        </div>
+        
+        <button type="submit" class="btn-primary"><i class="fas fa-file-alt"></i> Gerar Relatório</button>
+    </form>
+    
+    {% if relatorio %}
+        <hr>
+        <h3 class="fs-5"><i class="fas fa-clipboard-list"></i> Relatório Gerado:</h3>
+        <pre id="relatorio-texto">{{ relatorio }}</pre>
+        <div class="button-group">
+            <button class="btn-success" onclick="copiarRelatorio()"><i class="fas fa-copy"></i> Copiar</button>
+            <button class="btn-whatsapp" onclick="compartilharWhatsApp()"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+            <button class="btn-secondary" onclick="limparRelatorio()"><i class="fas fa-times"></i> Limpar</button>
+        </div>
+    {% endif %}
 
-            // Remove o atributo required de todos os inputs
-            document.querySelectorAll('input, select, textarea').forEach(input => input.removeAttribute('required'));
-
-            // O campo 'Cliente' é obrigatório por padrão, a menos que seja "Torres"
-            clienteDiv.style.display = 'block';
-            document.getElementById('cliente').setAttribute('required', 'required');
-
-            if (servico === 'INSTALAÇÃO FIBRA ÓPTICA' || servico === 'MIGRAÇÃO FIBRA ÓPTICA') { // Inclui MIGRAÇÃO
-                camposFibra.style.display = 'block';
-            } else if (servico === 'INSTALAÇÃO VIA RÁDIO') {
-                camposRadio.style.display = 'block';
-            } else if (servico === 'SERVIÇO EM TORRES') {
-                camposTorres.style.display = 'block';
-                document.getElementById('numero_torre').setAttribute('required', 'required');
-                clienteDiv.style.display = 'none'; // Oculta o campo cliente
-            } else if (servico === 'MUDANÇA DE ENDEREÇO' || servico === 'LENTIDÃO' || servico === 'SEM INTERNET' || servico === 'MANUTENÇÃO') {
-                camposManutencao.style.display = 'block';
-                const equipamentoManutencao = document.getElementById('equipamento-manutencao');
-                // Mostra a seção de equipamentos apenas para Mudança e Manutenção
-                equipamentoManutencao.style.display = (servico === 'MUDANÇA DE ENDEREÇO' || servico === 'MANUTENÇÃO') ? 'block' : 'none';
-                const alcasDivManutencao = document.getElementById('alcas-div-manutencao');
-                alcasDivManutencao.style.display = 'block';
-            } else if (servico === 'TROCA DE EQUIPAMENTO') {
-                camposTroca.style.display = 'block';
-                document.getElementById('mac_retirado').setAttribute('required', 'required');
-                document.getElementById('mac_novo').setAttribute('required', 'required');
-            } else if (servico === 'RETIRADA DE EQUIPAMENTOS') { // Novo bloco de lógica
-                camposRetirada.style.display = 'block';
-                document.getElementById('mac_retirado_retirada').setAttribute('required', 'required');
-            }
-        });
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('tipo_servico').dispatchEvent(new Event('change'));
-            const today = new Date();
-            const year = today.getFullYear();
-            const month = (today.getMonth() + 1).toString().padStart(2, '0');
-            const day = today.getDate().toString().padStart(2, '0');
-            document.getElementById('data_instalacao').value = `${year}-${month}-${day}`;
-        });
-        function copiarRelatorio() {
-            const relatorioTextarea = document.getElementById('relatorio-texto');
-            const tempTextArea = document.createElement('textarea');
-            tempTextArea.value = relatorioTextarea.innerText.trim();
-            document.body.appendChild(tempTextArea);
-            tempTextArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(tempTextArea);
-            alert('Relatório copiado para a área de transferência!');
-        }
-        function compartilharWhatsApp() {
-            const relatorioText = document.getElementById('relatorio-texto').innerText;
-            const encodedText = encodeURIComponent(relatorioText);
-            const whatsappUrl = `https://api.whatsapp.com/send?text=${encodedText}`;
-            window.open(whatsappUrl, '_blank');
-        }
-        function limparRelatorio() {
-            // Remove a exibição do resultado e esconde a linha horizontal e botões
-            document.querySelectorAll('.form-container > hr, .form-container .button-group, #relatorio-texto').forEach(element => {
-                element.remove();
-            });
-        }
-    </script>
-</body>
-</html>
+{% endblock %}
