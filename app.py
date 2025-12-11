@@ -5,12 +5,15 @@ app = Flask(__name__)
 
 def gerar_relatorio(form):
     """Gera o texto do relatório com base nos dados do formulário."""
-    tipo_servico = form.get('tipo_servico', 'Serviço Não Especificado')
+    tipo_servico = form.get('tipo_servico', 'Serviço Não Especificado').upper()
     cliente = form.get('cliente', '').upper()
-    data_instalacao = form.get('data_instalacao')
     
-    relatorio = f"CLIENTE: {cliente}\n"
-    relatorio += f"SERVIÇO: {tipo_servico}\n"
+    # ----------------------------------------------------
+    # ORDEM CORRIGIDA: Tipo de Serviço (Assunto) primeiro, depois Cliente
+    # ----------------------------------------------------
+    relatorio = f"SERVIÇO: {tipo_servico}\n"
+    if cliente:
+        relatorio += f"CLIENTE: {cliente}\n"
 
     # ==================================
     # CAMPOS GERAIS PARA INSTALAÇÃO/MIGRAÇÃO FIBRA
@@ -24,13 +27,13 @@ def gerar_relatorio(form):
         alcas_fibra = form.get('alcas_fibra')
         
         relatorio += "\nMATERIAL UTILIZADO:\n"
-        if cabo_fibra and int(cabo_fibra) > 0:
+        if cabo_fibra and cabo_fibra.isdigit() and int(cabo_fibra) > 0:
             relatorio += f"- {cabo_fibra} METROS DE DROP\n"
-        if conector_fibra and int(conector_fibra) > 0:
+        if conector_fibra and conector_fibra.isdigit() and int(conector_fibra) > 0:
             relatorio += f"- {conector_fibra} CONECTORES VERDES\n"
-        if adaptador_fibra and int(adaptador_fibra) > 0:
+        if adaptador_fibra and adaptador_fibra.isdigit() and int(adaptador_fibra) > 0:
             relatorio += f"- {adaptador_fibra} ACOPLADORES/EMENDAS\n"
-        if alcas_fibra and int(alcas_fibra) > 0:
+        if alcas_fibra and alcas_fibra.isdigit() and int(alcas_fibra) > 0:
             relatorio += f"- {alcas_fibra} ALÇAS\n"
         
         # Equipamento
@@ -43,7 +46,7 @@ def gerar_relatorio(form):
             relatorio += f"- ONU (MODELO): {onu}\n"
         if pon:
             relatorio += f"- PON (SERIAL): {pon}\n"
-        if smart_pro_tv_box and int(smart_pro_tv_box) > 0:
+        if smart_pro_tv_box and smart_pro_tv_box.isdigit() and int(smart_pro_tv_box) > 0:
             relatorio += f"- {smart_pro_tv_box} SMART PRO TV BOX\n"
         
         # Detalhe específico para Migração
@@ -61,13 +64,13 @@ def gerar_relatorio(form):
         alcas_radio = form.get('alcas_radio')
         
         relatorio += "\nMATERIAL UTILIZADO:\n"
-        if cabo_radio and int(cabo_radio) > 0:
+        if cabo_radio and cabo_radio.isdigit() and int(cabo_radio) > 0:
             relatorio += f"- {cabo_radio} METROS DE CABO DE REDE\n"
-        if conector_radio and int(conector_radio) > 0:
+        if conector_radio and conector_radio.isdigit() and int(conector_radio) > 0:
             relatorio += f"- {conector_radio} CONECTORES RJ-45\n"
-        if adaptador_radio and int(adaptador_radio) > 0:
+        if adaptador_radio and adaptador_radio.isdigit() and int(adaptador_radio) > 0:
             relatorio += f"- {adaptador_radio} ACOPLADORES/EMENDAS\n"
-        if alcas_radio and int(alcas_radio) > 0:
+        if alcas_radio and alcas_radio.isdigit() and int(alcas_radio) > 0:
             relatorio += f"- {alcas_radio} ALÇAS\n"
         
         # Equipamento
@@ -80,7 +83,7 @@ def gerar_relatorio(form):
             relatorio += f"- ROTEADOR: {roteador}\n"
         if antena:
             relatorio += f"- ANTENA: {antena}\n"
-        if smart_pro_tv_box and int(smart_pro_tv_box) > 0:
+        if smart_pro_tv_box and smart_pro_tv_box.isdigit() and int(smart_pro_tv_box) > 0:
             relatorio += f"- {smart_pro_tv_box} SMART PRO TV BOX\n"
 
     # ==================================
@@ -88,8 +91,7 @@ def gerar_relatorio(form):
     # ==================================
     elif tipo_servico == 'SERVIÇO EM TORRES':
         numero_torre = form.get('numero_torre', '').upper()
-        relatorio = relatorio.replace(f"CLIENTE: {cliente}\n", "") # Remove o cliente, que não é usado
-
+        relatorio = f"SERVIÇO: {tipo_servico}\n" # Reinicia o relatório, pois não tem CLIENTE
         relatorio += f"LOCAL: {numero_torre}\n"
 
         # Material
@@ -102,13 +104,13 @@ def gerar_relatorio(form):
         outros_equipamentos_torre = form.get('outros_equipamentos_torre', '').upper()
 
         relatorio += "\nMATERIAL/EQUIPAMENTO:\n"
-        if cabo_quantidade_torre and int(cabo_quantidade_torre) > 0:
+        if cabo_quantidade_torre and cabo_quantidade_torre.isdigit() and int(cabo_quantidade_torre) > 0:
             relatorio += f"- {cabo_quantidade_torre} METROS DE {cabo_tipo_torre}\n"
-        if conector_quantidade_torre and int(conector_quantidade_torre) > 0:
+        if conector_quantidade_torre and conector_quantidade_torre.isdigit() and int(conector_quantidade_torre) > 0:
             relatorio += f"- {conector_quantidade_torre} {conector_tipo_torre}\n"
-        if adaptador_quantidade_torre and int(adaptador_quantidade_torre) > 0:
+        if adaptador_quantidade_torre and adaptador_quantidade_torre.isdigit() and int(adaptador_quantidade_torre) > 0:
             relatorio += f"- {adaptador_quantidade_torre} ACOPLADORES/EMENDAS\n"
-        if alcas_torre and int(alcas_torre) > 0:
+        if alcas_torre and alcas_torre.isdigit() and int(alcas_torre) > 0:
             relatorio += f"- {alcas_torre} ALÇAS\n"
         if outros_equipamentos_torre:
             relatorio += f"- OUTROS: {outros_equipamentos_torre}\n"
@@ -126,13 +128,13 @@ def gerar_relatorio(form):
         alcas_manutencao = form.get('alcas_manutencao')
         
         relatorio += "\nMATERIAL UTILIZADO:\n"
-        if cabo_quantidade_manutencao and int(cabo_quantidade_manutencao) > 0:
+        if cabo_quantidade_manutencao and cabo_quantidade_manutencao.isdigit() and int(cabo_quantidade_manutencao) > 0:
             relatorio += f"- {cabo_quantidade_manutencao} METROS DE {cabo_tipo}\n"
-        if conector_quantidade_manutencao and int(conector_quantidade_manutencao) > 0:
+        if conector_quantidade_manutencao and conector_quantidade_manutencao.isdigit() and int(conector_quantidade_manutencao) > 0:
             relatorio += f"- {conector_quantidade_manutencao} {conector_tipo}\n"
-        if adaptador_quantidade_manutencao and int(adaptador_quantidade_manutencao) > 0:
+        if adaptador_quantidade_manutencao and adaptador_quantidade_manutencao.isdigit() and int(adaptador_quantidade_manutencao) > 0:
             relatorio += f"- {adaptador_quantidade_manutencao} ACOPLADORES/EMENDAS\n"
-        if alcas_manutencao and int(alcas_manutencao) > 0:
+        if alcas_manutencao and alcas_manutencao.isdigit() and int(alcas_manutencao) > 0:
             relatorio += f"- {alcas_manutencao} ALÇAS\n"
 
         # Equipamento (Só para Mudança e Manutenção)
@@ -146,7 +148,7 @@ def gerar_relatorio(form):
                 relatorio += f"- ONU (MODELO): {onu_manutencao}\n"
             if pon_manutencao:
                 relatorio += f"- PON (SERIAL): {pon_manutencao}\n"
-            if smart_pro_tv_box_manutencao and int(smart_pro_tv_box_manutencao) > 0:
+            if smart_pro_tv_box_manutencao and smart_pro_tv_box_manutencao.isdigit() and int(smart_pro_tv_box_manutencao) > 0:
                 relatorio += f"- {smart_pro_tv_box_manutencao} SMART PRO TV BOX\n"
             
     # ==================================
@@ -180,9 +182,18 @@ def gerar_relatorio(form):
     if observacoes:
         relatorio += f"\nOBSERVAÇÕES: {observacoes}\n"
 
-    relatorio += f"\nDATA: {date.today().strftime('%d/%m/%Y')}\n"
+    # A data do formulário vem em YYYY-MM-DD
+    data_instalacao_str = form.get('data_instalacao')
+    data_formatada = ""
+    try:
+        data_obj = datetime.datetime.strptime(data_instalacao_str, '%Y-%m-%d').date()
+        data_formatada = data_obj.strftime('%d/%m/%Y')
+    except (ValueError, TypeError):
+        data_formatada = date.today().strftime('%d/%m/%Y')
+
+    relatorio += f"\nDATA: {data_formatada}\n"
     
-    return relatorio
+    return relatorio.strip()
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -193,5 +204,5 @@ def index():
     return render_template('relatorio.html', relatorio=relatorio)
 
 if __name__ == '__main__':
-    # Use 0.0.0.0 para que o Vercel ou Termux consiga rodar
+    # Garante que o servidor rode em modo debug
     app.run(host='0.0.0.0', port=5000, debug=True)
